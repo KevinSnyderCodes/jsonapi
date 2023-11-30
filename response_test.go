@@ -472,7 +472,7 @@ func TestOmitsZeroTimes(t *testing.T) {
 }
 
 func TestMarshal_Times(t *testing.T) {
-	aTime := time.Date(2016, 8, 17, 8, 27, 12, 23849, time.UTC)
+	aTime := time.Date(2016, 8, 17, 8, 27, 12, 238490000, time.UTC)
 
 	for _, tc := range []struct {
 		desc         string
@@ -530,6 +530,34 @@ func TestMarshal_Times(t *testing.T) {
 			verification: func(root map[string]interface{}) error {
 				v := root["data"].(map[string]interface{})["attributes"].(map[string]interface{})["iso8601p"].(string)
 				if got, want := v, aTime.UTC().Format(iso8601TimeFormat); got != want {
+					return fmt.Errorf("got %v, want %v", got, want)
+				}
+				return nil
+			},
+		},
+		{
+			desc: "iso8601Milli_byValue",
+			input: &TimestampModel{
+				ID:            5,
+				ISO8601MilliV: aTime,
+			},
+			verification: func(root map[string]interface{}) error {
+				v := root["data"].(map[string]interface{})["attributes"].(map[string]interface{})["iso8601milliv"].(string)
+				if got, want := v, aTime.UTC().Format(iso8601MilliTimeFormat); got != want {
+					return fmt.Errorf("got %v, want %v", got, want)
+				}
+				return nil
+			},
+		},
+		{
+			desc: "iso8601Milli_byPointer",
+			input: &TimestampModel{
+				ID:            5,
+				ISO8601MilliP: &aTime,
+			},
+			verification: func(root map[string]interface{}) error {
+				v := root["data"].(map[string]interface{})["attributes"].(map[string]interface{})["iso8601millip"].(string)
+				if got, want := v, aTime.UTC().Format(iso8601MilliTimeFormat); got != want {
 					return fmt.Errorf("got %v, want %v", got, want)
 				}
 				return nil

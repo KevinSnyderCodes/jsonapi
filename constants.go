@@ -2,17 +2,19 @@ package jsonapi
 
 const (
 	// StructTag annotation strings
-	annotationJSONAPI   = "jsonapi"
-	annotationPrimary   = "primary"
-	annotationClientID  = "client-id"
-	annotationAttribute = "attr"
-	annotationRelation  = "relation"
-	annotationOmitEmpty = "omitempty"
-	annotationISO8601   = "iso8601"
-	annotationRFC3339   = "rfc3339"
-	annotationSeperator = ","
+	annotationJSONAPI      = "jsonapi"
+	annotationPrimary      = "primary"
+	annotationClientID     = "client-id"
+	annotationAttribute    = "attr"
+	annotationRelation     = "relation"
+	annotationOmitEmpty    = "omitempty"
+	annotationISO8601      = "iso8601"
+	annotationISO8601Milli = "iso8601milli"
+	annotationRFC3339      = "rfc3339"
+	annotationSeperator    = ","
 
-	iso8601TimeFormat = "2006-01-02T15:04:05Z"
+	iso8601TimeFormat      = "2006-01-02T15:04:05Z"
+	iso8601MilliTimeFormat = "2006-01-02T15:04:05.000Z"
 
 	// MediaType is the identifier for the JSON API media type
 	//

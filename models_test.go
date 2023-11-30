@@ -26,13 +26,15 @@ type WithPointer struct {
 }
 
 type TimestampModel struct {
-	ID       int        `jsonapi:"primary,timestamps"`
-	DefaultV time.Time  `jsonapi:"attr,defaultv"`
-	DefaultP *time.Time `jsonapi:"attr,defaultp"`
-	ISO8601V time.Time  `jsonapi:"attr,iso8601v,iso8601"`
-	ISO8601P *time.Time `jsonapi:"attr,iso8601p,iso8601"`
-	RFC3339V time.Time  `jsonapi:"attr,rfc3339v,rfc3339"`
-	RFC3339P *time.Time `jsonapi:"attr,rfc3339p,rfc3339"`
+	ID            int        `jsonapi:"primary,timestamps"`
+	DefaultV      time.Time  `jsonapi:"attr,defaultv"`
+	DefaultP      *time.Time `jsonapi:"attr,defaultp"`
+	ISO8601V      time.Time  `jsonapi:"attr,iso8601v,iso8601"`
+	ISO8601P      *time.Time `jsonapi:"attr,iso8601p,iso8601"`
+	ISO8601MilliV time.Time  `jsonapi:"attr,iso8601milliv,iso8601milli"`
+	ISO8601MilliP *time.Time `jsonapi:"attr,iso8601millip,iso8601milli"`
+	RFC3339V      time.Time  `jsonapi:"attr,rfc3339v,rfc3339"`
+	RFC3339P      *time.Time `jsonapi:"attr,rfc3339p,rfc3339"`
 }
 
 type Car struct {

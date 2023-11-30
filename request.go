@@ -23,6 +23,9 @@ var (
 	// ErrInvalidISO8601 is returned when a struct has a time.Time type field and includes
 	// "iso8601" in the tag spec, but the JSON value was not an ISO8601 timestamp string.
 	ErrInvalidISO8601 = errors.New("Only strings can be parsed as dates, ISO8601 timestamps")
+	// ErrInvalidISO8601Milli is returned when a struct has a time.Time type field and includes
+	// "iso8601milli" in the tag spec, but the JSON value was not an ISO8601 timestamp string with milliseconds.
+	ErrInvalidISO8601Milli = errors.New("Only strings can be parsed as dates, ISO8601 timestamps with milliseconds")
 	// ErrInvalidRFC3339 is returned when a struct has a time.Time type field and includes
 	// "rfc3339" in the tag spec, but the JSON value was not an RFC3339 timestamp string.
 	ErrInvalidRFC3339 = errors.New("Only strings can be parsed as dates, RFC3339 timestamps")
@@ -448,13 +451,15 @@ func handleStringSlice(attribute interface{}) (reflect.Value, error) {
 }
 
 func handleTime(attribute interface{}, args []string, fieldValue reflect.Value) (reflect.Value, error) {
-	var isISO8601, isRFC3339 bool
+	var isISO8601, isISO8601Milli, isRFC3339 bool
 	v := reflect.ValueOf(attribute)
 
 	if len(args) > 2 {
 		for _, arg := range args[2:] {
 			if arg == annotationISO8601 {
 				isISO8601 = true
+			} else if arg == annotationISO8601Milli {
+				isISO8601Milli = true
 			} else if arg == annotationRFC3339 {
 				isRFC3339 = true
 			}
@@ -469,6 +474,23 @@ func handleTime(attribute interface{}, args []string, fieldValue reflect.Value) 
 		t, err := time.Parse(iso8601TimeFormat, v.Interface().(string))
 		if err != nil {
 			return reflect.ValueOf(time.Now()), ErrInvalidISO8601
+		}
+
+		if fieldValue.Kind() == reflect.Ptr {
+			return reflect.ValueOf(&t), nil
+		}
+
+		return reflect.ValueOf(t), nil
+	}
+
+	if isISO8601Milli {
+		if v.Kind() != reflect.String {
+			return reflect.ValueOf(time.Now()), ErrInvalidISO8601Milli
+		}
+
+		t, err := time.Parse(iso8601MilliTimeFormat, v.Interface().(string))
+		if err != nil {
+			return reflect.ValueOf(time.Now()), ErrInvalidISO8601Milli
 		}
 
 		if fieldValue.Kind() == reflect.Ptr {

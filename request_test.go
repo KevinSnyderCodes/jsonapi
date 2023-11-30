@@ -344,6 +344,7 @@ func TestUnmarshalSetsAttrs(t *testing.T) {
 
 func TestUnmarshal_Times(t *testing.T) {
 	aTime := time.Date(2016, 8, 17, 8, 27, 12, 0, time.UTC)
+	aTimeMilli := time.Date(2016, 8, 17, 8, 27, 12, 123000000, time.UTC)
 
 	for _, tc := range []struct {
 		desc         string
@@ -440,6 +441,53 @@ func TestUnmarshal_Times(t *testing.T) {
 					Type: "timestamps",
 					Attributes: map[string]interface{}{
 						"iso8601v": "not a timestamp",
+					},
+				},
+			},
+			wantErr: true,
+		},
+		// ISO 8601 with milliseconds:
+		{
+			desc: "iso8601Milli_byValue",
+			inputPayload: &OnePayload{
+				Data: &Node{
+					Type: "timestamps",
+					Attributes: map[string]interface{}{
+						"iso8601milliv": "2016-08-17T08:27:12.123Z",
+					},
+				},
+			},
+			verification: func(tm *TimestampModel) error {
+				if !tm.ISO8601MilliV.Equal(aTimeMilli) {
+					return errors.New("times not equal!")
+				}
+				return nil
+			},
+		},
+		{
+			desc: "iso8601Milli_byPointer",
+			inputPayload: &OnePayload{
+				Data: &Node{
+					Type: "timestamps",
+					Attributes: map[string]interface{}{
+						"iso8601millip": "2016-08-17T08:27:12.123Z",
+					},
+				},
+			},
+			verification: func(tm *TimestampModel) error {
+				if !tm.ISO8601MilliP.Equal(aTimeMilli) {
+					return errors.New("times not equal!")
+				}
+				return nil
+			},
+		},
+		{
+			desc: "iso8601Milli_invalid",
+			inputPayload: &OnePayload{
+				Data: &Node{
+					Type: "timestamps",
+					Attributes: map[string]interface{}{
+						"iso8601milliv": "not a timestamp",
 					},
 				},
 			},
