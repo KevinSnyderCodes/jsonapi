@@ -91,6 +91,11 @@ type Link struct {
 	Meta Meta   `json:"meta,omitempty"`
 }
 
+// Itemable is used to marshal items using a struct pointer instead of a slice.
+type Itemable interface {
+	JSONAPIItems() interface{}
+}
+
 // Linkable is used to include document links in response data
 // e.g. {"self": "http://example.com/posts/1"}
 type Linkable interface {

@@ -71,13 +71,8 @@ func MarshalPayload(w io.Writer, models interface{}) error {
 	return json.NewEncoder(w).Encode(payload)
 }
 
-// Marshal does the same as MarshalPayload except it just returns the payload
-// and doesn't write out results. Useful if you use your own JSON rendering
-// library.
-func Marshal(models interface{}) (Payloader, error) {
-	switch vals := reflect.ValueOf(models); vals.Kind() {
-	case reflect.Slice:
-		m, err := convertToSliceInterface(&models)
+func marshalSlice(models interface{}, items interface{}) (Payloader, error) {
+	m, err := convertToSliceInterface(&items)
 		if err != nil {
 			return nil, err
 		}
@@ -100,7 +95,20 @@ func Marshal(models interface{}) (Payloader, error) {
 		}
 
 		return payload, nil
+}
+
+// Marshal does the same as MarshalPayload except it just returns the payload
+// and doesn't write out results. Useful if you use your own JSON rendering
+// library.
+func Marshal(models interface{}) (Payloader, error) {
+	switch vals := reflect.ValueOf(models); vals.Kind() {
+	case reflect.Slice:
+		return marshalSlice(models, models)
 	case reflect.Ptr:
+		if itemableModels, isItemable := models.(Itemable); isItemable {
+			return marshalSlice(models, itemableModels.JSONAPIItems())
+		}
+
 		// Check that the pointer was to a struct
 		if reflect.Indirect(vals).Kind() != reflect.Struct {
 			return nil, ErrUnexpectedType
