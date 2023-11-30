@@ -74,10 +74,11 @@ func (l *Links) validate() (err error) {
 	for k, v := range *l {
 		_, isString := v.(string)
 		_, isLink := v.(Link)
+		isNull := v == nil
 
-		if !(isString || isLink) {
+		if !(isString || isLink || isNull) {
 			return fmt.Errorf(
-				"The %s member of the links object was not a string or link object",
+				"The %s member of the links object was not a string, link object, or null",
 				k,
 			)
 		}

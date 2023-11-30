@@ -94,6 +94,7 @@ func (b *Blog) JSONAPILinks() *Links {
 				},
 			},
 		},
+		"null": nil,
 	}
 }
 
