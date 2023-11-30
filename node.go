@@ -59,6 +59,12 @@ type RelationshipManyNode struct {
 	Meta  *Meta   `json:"meta,omitempty"`
 }
 
+// RelationshipNoData is used to represent a JSON API relation with no data
+type RelationshipNoData struct {
+	Links *Links `json:"links,omitempty"`
+	Meta  *Meta  `json:"meta,omitempty"`
+}
+
 // Links is used to represent a `links` object.
 // http://jsonapi.org/format/#document-links
 type Links map[string]interface{}

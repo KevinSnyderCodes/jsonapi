@@ -371,13 +371,6 @@ func visitModelNode(model interface{}, included *map[string]*Node,
 				omitEmpty = args[2] == annotationOmitEmpty
 			}
 
-			isSlice := fieldValue.Type().Kind() == reflect.Slice
-			if omitEmpty &&
-				(isSlice && fieldValue.Len() < 1 ||
-					(!isSlice && fieldValue.IsNil())) {
-				continue
-			}
-
 			if node.Relationships == nil {
 				node.Relationships = make(map[string]interface{})
 			}
@@ -390,6 +383,19 @@ func visitModelNode(model interface{}, included *map[string]*Node,
 			var relMeta *Meta
 			if metableModel, ok := model.(RelationshipMetable); ok {
 				relMeta = metableModel.JSONAPIRelationshipMeta(args[1])
+			}
+
+			isSlice := fieldValue.Type().Kind() == reflect.Slice
+			if omitEmpty &&
+				(isSlice && fieldValue.Len() < 1 ||
+					(!isSlice && fieldValue.IsNil())) {
+				if relLinks != nil || relMeta != nil {
+					node.Relationships[args[1]] = &RelationshipNoData{
+						Links: relLinks,
+						Meta:  relMeta,
+					}
+				}
+				continue
 			}
 
 			if isSlice {
